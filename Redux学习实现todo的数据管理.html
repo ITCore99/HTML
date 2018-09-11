@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../js/Redux/redux.js"></script>
+    <script>
+        window.onload=function()
+        {
+            //定义初始化状态
+            const initState=
+                {
+                    todos:[{content:"金榜题名时",complete:true},
+                           {content:"洞房花烛夜",complete:false},
+                           {content:"他乡遇故知",complete:true},
+                           {content:"久旱逢甘霖",complete:false},
+                          ],
+                    visibility:"all",
+                }
+            //定义添加TODO的creator action
+            function AddTodo(content)
+            {
+                return{
+                    type:"ADD_TODO",
+                    content,
+                }
+
+            }
+            //定义状态转化的action
+            function ToggleTodo(todo)
+            {
+                return{
+                    type:"TOGGLE_TODO",
+                    todo,
+                }
+            }
+            //定义选择的类型的action
+            function SelectTodo(flag)
+            {
+                return{
+                    type:"SELECTTODO",
+                    flag,
+                }
+            }
+            //定义蒓函数reducer
+            // function reducer(state=initState,action)
+            // {
+            //     switch (action.type)
+            //     {
+            //         case "ADD_TODO":
+            //             var todos=[...state.todos,{content:action.content,complete:false}];
+            //             return Object.assign({},state,{todos});
+            //         case "TOGGLE_TODO":
+            //             var todos=state.todos.map((item)=>{
+            //                 if(item==action.todo)
+            //                 {
+            //                     return Object.assign({},item,{complete:!item.complete});
+            //                 }else
+            //                 {
+            //                     return item;
+            //                 }
+            //             });
+            //             return Object.assign({},state,{todos});
+            //         case "SELECTTODO":
+            //             return Object.assign({},state,{visibility:action.flag});
+            //         default:
+            //             return state;
+            //     }
+            // }
+             //拆分reducer
+             //当项目的状态比较多是我们的reducer将比较复杂，所以为简化reducer我们要将reducer进行拆分一个reducer管理一个状态 。
+            //定义todos的reducer,传入的是数组所以返回的应该也是一个数组就不在是一个对象,注意我们在使用将reducer分开时要清楚我们哪一个action是改变哪一个state的值的。
+            function todos(state=[],action)
+            {
+                switch(action.type)//注意不要忘记default
+                {
+                    case "ADD_TODO":
+                        return [...initState.todos,{content:action.content,complete:false}];
+                    case "TOGGLE_TODO":
+                        return initState.todos.map((item)=>{
+                            if(item==action.todo)
+                            {
+                                return Object.assign({},item,{complete:!item.complete})
+                            }else
+                            {
+                                return item;
+                            }
+                        });
+                    default:
+                        return state;
+                }
+            }
+            //创建visibility的reducer,传入的是一个字符串返回的也是一个字符串
+            function visibility(state="",action)
+            {
+                switch(action.type)
+                {
+                    case "SELECTTODO":
+                        return action.flag;
+                    default:
+                        return state;
+                }
+            }
+            //再将reducer进行合并
+            //可以使用手动的合并
+            // function reducer(state=initState,action)
+            // {
+            //     return{
+            //             todos:todos(state.todos,action),
+            //             visibility:visibility(state.visibility,action),
+            //         }
+            // }
+            //redux提供的方法
+            var  reducer=Redux.combineReducers({
+                todos,
+                visibility,
+            })
+
+            //创建store
+            const store=Redux.createStore(reducer,initState);
+            //使用store
+            console.log(store.getState());
+            //定义订阅进行监听
+            store.subscribe(()=>
+            {
+                console.log(store.getState());
+            });
+            //分派进行添加
+            store.dispatch(AddTodo("爱人一起长相守"));
+            //分派进行转换状态
+            store.dispatch(ToggleTodo(initState.todos[1]));
+            //分派进行选择.
+
+            store.dispatch(SelectTodo("active"));
+        }
+    </script>
+</head>
+<body>
+        <h1>Redux store实现TODO数据的管理</h1>
+</body>
+</html>
