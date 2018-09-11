@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>实现双向的数据绑定</title>
+    <script src="./vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <button @click="parentAdd">对父亲的初始值进行相应的改变</button>
+        <h3>父组件的值是：{{fathernum}}</h3>
+        <!--<my-component>-->
+                      <!--&lt;!&ndash;v-bind:my-num="fathernum"&ndash;&gt;-->
+                      <!--&lt;!&ndash;@addparent="addSelf"&ndash;&gt;-->
+                      <!--&lt;!&ndash;@redparent="redSelf"&ndash;&gt;-->
+        <!--&gt;</my-component>-->
+        <my-component :vlaue="998"></my-component>
+    </div>
+</body>
+<script>
+    /**
+     * 封装并实现v-model一样的双向数据绑定组件
+     */
+    Vue.component("my-component",{
+        props:{
+            "my-num":{
+                type:Number,
+            },
+            value:{
+                type:Number,
+            }
+        },
+        template:"<div><button @click='reduce'>-</button>" +
+        "<strong>{{num}}</strong>" +
+        "<button @click='add'>+</button></div>",
+        data(){
+          return{
+              // num:this.myNum,/**赋值只执行一次**/
+                 num:this.value,
+          }
+        },        /**注意一个组件只能更改本组件的值，不能直接更改别的组件的值，所以说子组件不能直接更改父组件的值*/
+        methods:{
+            reduce()
+            {
+                // this.num=this.num-1;不需要的原因是点击事会触发父组件的自定义事件会将父类的数据改了,当父类的数据改了后又通过了watch来讲子组件的数据更改了所以就出现了不要也能更改的情况。
+                this.$emit("redparent");/**子对父传值时触发自定义事件，再通过对自定义事件的监听，父类做出相应的改变即就是触发父类的相应方法*/
+            },
+            add()
+            {
+                // this.num=this.num+1;
+                this.$emit("addparent");/**通过触发自定义事件来进行子对父传值 */
+            },
+        },
+        watch:{/**对元素进行监听并执行相应的事件处理,当数据绑定发生变化后就进行重新的赋值*/
+            myNum(val)/**注意这里的函数名必须要与前面的名一致*/
+            {
+                this.num=val;
+            },
+            value(val)
+            {
+                this.num=val;
+            }
+        }
+    });
+    var app=new Vue({
+        el:"#app",
+        data:{
+            fathernum:10,
+        },
+        methods:{
+            parentAdd()
+            {
+                this.fathernum=this.fathernum+1;
+            },
+            addSelf()
+            {
+                this.fathernum++
+            },
+            redSelf()
+            {
+                this.fathernum--;
+            }
+        }
+    })
+</script>
+</html>
