@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./vue.js"></script>
+    <link rel="stylesheet"href="./index.css">
+</head>
+<body>
+    <div id="app">
+        <my-btn text="切换按钮上的内容" @click.native="handleClick">切换按钮的内容</my-btn>
+            <my-btn v-bind:text="btnText"></my-btn>
+    </div>
+</body>
+<script>
+    /**
+     * 定义与注册一个组件
+     */
+    Vue.component("my-btn",{
+        props:{
+            text:{
+                type:String,
+            }
+        },
+        template:"<button class='MyBtn'>{{text}}</button>",
+    });
+    var app=new Vue({
+        el:"#app",
+        data:{
+            btnText:"我的按钮",
+        },
+        methods:{
+            handleClick()
+            {
+                this.btnText="你的按钮";
+            }
+        }
+    });
+</script>
+</html>
