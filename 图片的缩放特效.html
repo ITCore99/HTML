@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding:0;
+        }
+        .container
+        {
+            width:250px;
+            height:140px;
+            border: 1px solid #000;
+            margin: 50px auto;
+            overflow: hidden;
+        }
+        img
+        {
+            width:250px;
+            vertical-align:center;
+            height:140px;
+            transition:transform ease 0.5s;
+        }
+        .container:hover img
+        {
+            transform:scale(2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+         <img src="../images/7.jpg"/>
+    </div>
+</body>
+</html>
