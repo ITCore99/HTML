@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        /*Css Reset Start*/
+        *{margin:0;padding:0}
+        li{list-style-type:none;}
+        /*CSS Reset End*/
+        
+        /*Tab Style Start*/
+        .tab1{width:300px;margin:50px auto; border:2px solid red;}
+        .tab1 ul{widows: 100%;overflow: hidden;}
+        .tab1 ul li{float: left;margin-left:20px;}
+        .tab1 ul li.on{background-color:pink !important;}
+        .tabBody div{margin-left:20px;display: none;}
+        .tabBody div.active{display: block !important;}
+        /*Tab Style End*/
+    </style>
+    <script>
+        window.onload=function()
+        {   
+            //注意我们使用构造器加原型的方式时我们创建对象时是通过new对象的方式，而这类我们
+            //如果是使用了class的话我们class就相当于构造器他的底层就是通过构造器来实现的我们是通过new class来创建对象的
+            class Tab
+            { 
+               //constructor()就是构造器为对象的属性进行赋值.new class创建对象其实就是new class里面的constructor
+               //也就相当于调用constructor方法
+               //注意在使用面向对象编程时一定要注意this一定要保证一直是new出的这个对象。
+               constructor(tab)        
+               {   
+                    console.log(tab)
+                    this.tab=document.getElementById(tab);
+                    console.log(this.tab);
+                    this.lis=this.tab.getElementsByTagName("li");
+                    this.tabBody=this.tab.getElementsByTagName("div")[0];
+                    this.divs=this.tabBody.getElementsByTagName("div");
+                    this.init();
+               }
+               init()
+               {
+                   for(let i=0;i<this.lis.length;i++)
+                   {  
+                       let that=this;
+                       this.lis[i].onclick=function()//注意这里一定要注意的是在事件中this指的是事件源。
+                       {   
+                           that.showTab(i);
+                       }
+                   }
+               }
+               showTab(index)
+               {
+                   for(let i=0;i<this.lis.length;i++)
+                   {
+                       this.lis[i].className="";
+                       this.divs[i].className="";
+                   }
+                   this.lis[index].className="on";
+                   this.divs[index].className="active";
+               }
+            }
+            new Tab("tab1");
+            new Tab("tab2");
+            new Tab("tab3");
+        }
+    </script>
+</head>
+<body>
+    <div id="tab1" class="tab1">
+        <ul>
+            <li class="on">选项一</li>
+            <li>选项二</li>
+            <li>选项三</li>
+        </ul>
+        <div class="tabBody"> 
+            <div class="active">选项1的内容</div>
+            <div>选项2的内容</div>
+            <div>选项3的内容</div>
+        </div>
+    </div>
+    <div id="tab2" class="tab1">
+            <ul>
+                <li class="on">选项一</li>
+                <li>选项二</li>
+                <li>选项三</li>
+            </ul>
+            <div class="tabBody"> 
+                <div class="active">选项1的内容</div>
+                <div>选项2的内容</div>
+                <div>选项3的内容</div>
+            </div>
+        </div>
+        <div id="tab3" class="tab1">
+            <ul>
+                <li class="on">选项一</li>
+                <li>选项二</li>
+                <li>选项三</li>
+            </ul>
+            <div class="tabBody"> 
+                <div class="active">选项1的内容</div>
+                <div>选项2的内容</div>
+                <div>选项3的内容</div>
+            </div>
+        </div>
+</body>
+</html>
