@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="500"></canvas>
+</body>
+<script src="../js/until.js"></script>
+<script>
+    let canvas=document.querySelector("#canvas");
+    canvas.style.background="#f1f1f1";
+    let ctx=canvas.getContext("2d");
+    let x=50;
+    let y=50;
+    let vx=5;
+    let vy=5;
+
+    function go()
+    {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.beginPath();
+        let color=ctx.createRadialGradient(x,y,0,x,y,25);
+        color.addColorStop(0,"#fff");
+        color.addColorStop(1,"#f00");
+        ctx.arc(x,y,25,getRad(0),getRad(360),true);
+        ctx.fillStyle=color;
+        ctx.fill();
+        ctx.stroke();
+        x=x+vx;
+        y=y+vy;
+        vy=(vy-0.003*vy);
+        vx=(vx-0.003*vx);
+        if(x>800-25||x<25)
+        {
+            vx=-vx
+        };
+        if(y>500-25||y<25)
+        {
+            vy=-vy;
+        }
+        requestAnimationFrame(go)
+    }
+
+
+    requestAnimationFrame(go)
+</script>
+</html>
