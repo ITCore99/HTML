@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,mininum-scale=1.0,maxinum-scale=1.0 user-scalable= no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/countup.js/1.9.3/countUp.js"></script>
+</head>
+<body>
+        <div id="box"></div>
+</body>
+<script>
+    window.onload=function(){
+           /**奇淫技巧*/
+          /**将数组中的数值打乱这个不是随机的打乱*/
+          var numbers=[5,458,120,-215,228,400,122205,-85411];
+          numbers.sort(()=>Math.random()-0.5);
+          console.log("打印了",numbers);
+          /**得到一个随机数指定范围的*/
+          function getRaandomNumber(max,min)
+          {
+              return Math.random()*(max-min)+min; // 0.9*9+1   //0*9+1
+          };
+          console.log("产生的随机数",Math.floor(getRaandomNumber(10,1)));
+          /**讲一个数组真真的打乱洗牌算法*/
+          function shuffle(arr)
+          {
+              let len=arr.length,
+                  t,i;
+              while(len)
+              {
+                  i=Math.floor(Math.random()*len--);
+                  /**进行交换通过将每次从数组的最后一位拿出数与随机其他位置元素进行交换达到随机目的*/
+                  t=arr[len];
+                  arr[len]=arr[i];
+                  arr[i]=t;
+              }  
+              return arr;
+          }  
+          console.log(shuffle([1,2,8,9,4,6,1,8,8]));
+          /**验证是否是数字*/
+          function isNumber(n)
+          {
+              return ! isNaN(parseFloat(n)) && isFinite(n);//这个函数isFinite判断是不是有限的
+          } 
+          console.log("我是不是数字",isNumber(0),isNumber("o"),isNumber(NaN),isNumber(null),isNumber(undefined),isNumber("123abc"),isNumber(""),isNaN(""));
+          console.log("我是除以0的结果",8/0);
+          /**逗号操作符*/
+          var a=0;
+          var b=(a++,99);
+          console.log("我是a",a);
+          console.log("我是b",b);
+          /**实现数字滚动*/
+          var options = {
+            useEasing: true, 
+            useGrouping: true, 
+            separator: ',', 
+            decimal: '.', 
+           };
+        var demo = new CountUp('box', 0, 4068, 0, 10, options);
+        if (!demo.error) {
+            demo.start();
+        } else {
+            console.error(demo.error);
+        }
+    }
+</script>
+</html>
