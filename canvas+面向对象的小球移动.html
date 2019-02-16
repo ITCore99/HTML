@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        canvas{
+            border:1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="600px" height="300px"></canvas>
+</body>
+<script>
+        let canvas=document.querySelector("#myCanvas");
+        console.log(canvas);
+        //获取上下文
+        let ctx=canvas.getContext("2d");
+        //帧数
+        let fno=0;
+        //数组用于存放小球的实例对象,这样我们在定时其中就可以很方便的使用for循环来进行
+        //调用方法update和render   
+        let ballArr=[]
+
+        //创建小球的构造函数 球类（注意面向对象的思想）
+        function Ball(x,y,r,speed,color)
+        {
+            this.x=x; //球的x坐标
+            this.y=y; //球的Y坐标
+            this.r=r; //球的半径
+            this.speed=speed; //求得速度
+            this.color=color; //球的颜色
+            ballArr.push(this);
+        }
+        /**给小球实例上绑定渲染方法*/
+        Ball.prototype.render=function(){
+            ctx.beginPath();
+            ctx.strokeStyle=this.color;
+            ctx.arc(this.x,this.y,this.r,0,Math.PI*2,true);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fillStyle=this.color; 
+            ctx.fill();
+          
+        } 
+        /**小球的更新方法就是重复清屏重新画图*/
+        Ball.prototype.update=function(){
+           this.x+=this.speed;
+
+        }
+        new Ball(20,20,5,1,"orange");
+        new Ball(20,50,50,2,"skyblue"); 
+        new Ball(20,100,70,5,"red"); 
+        new Ball(20,200,100,9,"green");
+        
+        /**设置定时器*/
+        setInterval(()=>{
+            fno++;
+            ctx.clearRect(0,0,600,300);
+            ctx.font="10px serif"
+            ctx.strokeStyle = "#353535";
+            ctx.strokeText(fno,15,15);
+            ballArr.forEach(item=>{
+                item.update();
+                item.render()
+            });
+          
+           
+        },100)
+      
+ 
+        
+    </script>
+</html>

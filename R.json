@@ -1,0 +1,16 @@
+{
+    "images":[
+        {
+            "name":"gril",
+            "url":"https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2097124721,3074829049&fm=27&gp=0.jpg"
+        },
+        {
+            "name":"qishi",
+            "url":"https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=568261753,1944637744&fm=27&gp=0.jpg"
+        },
+        {
+            "name":"queen",
+            "url":"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=250029045,856017592&fm=27&gp=0.jpg"
+        }
+    ]
+}

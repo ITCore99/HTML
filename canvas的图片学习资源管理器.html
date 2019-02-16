@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        canvas{
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="600px" height="300px"></canvas>
+    <script>
+        let canvas=document.querySelector("#myCanvas");
+        let ctx=canvas.getContext("2d");
+
+        /**由于在canvas中进行图片的绘制是必须图片先要加载完毕后才能进行绘制，当有多张图片时我们应该怎么整这就用到了我们的资源管理器就是使用外置的josn结合ajax来配置资源管理.
+        1.我们需要配置一个json文件 如R.josn。
+        2.使用ajax进行资源文件的读取
+        */
+        
+
+        //使用ajax进行资源文件的读取R.json
+        var xhr= new XMLHttpRequest();
+        xhr.onreadystatechange=function()
+        {
+           if(xhr.readyState==4)
+           {
+               console.log(xhr.responseText);
+           }
+        }
+        xhr.open("get","./R.json",true);
+        xhr.send(null);
+
+    </script>
+</body>
+</html>
