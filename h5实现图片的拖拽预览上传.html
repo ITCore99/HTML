@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        /**css Reset Styel Start*/
+        div,span
+        {
+           margin:0;
+           padding:0;
+        }
+        /**css Reset Style End*/
+        .dragArea
+        {
+            width: 600px;
+            height: 400px;
+            margin: 100px  auto 0px;
+            border: 1px solid #333;  
+            line-height: 400px;
+        }
+        .dragArea .tips
+        {
+          text-align: center;
+          margin: 0 auto;
+        }
+        .image
+        {
+            width: 100px;
+            height: 100px;
+        }
+        .listArea 
+        {
+            width: 600px;
+            margin: 0px auto;
+        }
+        .listArea .title
+        {
+            display: inline-block;
+            width: 90%;
+            font-size: 14px;
+            font-weight: 600;
+            color:#409eff;
+            margin-bottom: 5px;
+        }
+        .listArea .del
+        {
+          display: inline-block;
+          width: 10%;
+          font-size: 12px;
+          color:blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="dragArea">
+          <div class="tips">请将图片拖至此处进行上传</div>
+    </div>
+    <div class="listArea">
+    </div>
+    <script>
+        ;(function(){
+            let  dragArea="";
+            let  tips="";
+            let  listArea=""; 
+            let  FileArr=[];  //存放上传的文件数组
+            let  url="";      //上传路径
+            init();
+            /**页面初始化函数*/
+            function init()
+            {
+                eventBind();
+            }
+            /**页面绑定函数*/
+            function eventBind()
+            {
+                dragArea=document.querySelector(".dragArea");
+                tips=document.querySelector(".tips");
+                listArea=document.querySelector(".listArea");
+                dragArea.addEventListener("dragenter",shuntFun,false);
+                dragArea.addEventListener("dragover",shuntFun,false);
+                dragArea.addEventListener("dragleave",shuntFun,false);
+                dragArea.addEventListener("drop",shuntFun,false);
+                
+            }
+            /**分流函数*/
+            function shuntFun(e)
+            {
+                e.preventDefault();
+                // if(e.type=="dragenter"||e.type=="dragover")
+                // {
+                //     tips.style.display="none";
+                //     console.log("1")
+                // }else if(e.type=="drop")
+                // { 
+                //     console.log("2")
+                //     drop();
+                // }else if(e.type=="dragleave"){
+                //     console.log("3")
+                //     tips.style.display="block";
+                // }
+                if(e.type=="drop")
+                {
+                    tips.style.display="none";
+                    this.style.lineHeight="1";
+                    drop(e);
+                }
+            }
+            /**拖拽函数*/
+            function drop(e)
+            {
+              let files=fliter(e.dataTransfer.files);
+              for(let i=0,len=files.length;i<len;i++)
+              {
+                  
+                  if(typeof FileReader==="undefined")
+                  {
+                      alert("你的浏览器不支持FileReader请使用现代浏览器");
+                      return;
+                  }
+                  let file=files[i];
+                  //创建读文件对象
+                 let fileReader=new FileReader();
+                 //将file文件转化为base64
+                 fileReader.readAsDataURL(file); 
+                 //文件读取完触发事件
+                 fileReader.onload=function(){
+                    //  console.log(fileReader);
+                     let image=new Image();
+                     image.src=this.result;
+                     image.width="100";
+                     image.height="100"; 
+                     image.id=i; 
+                     dragArea.appendChild(image);
+                     fileShowList(file,i);
+                   
+                 }
+                 FileArr.push({num:i,file:file});
+              }
+              console.log("刚开始的FileArr",FileArr);
+            }
+            /**过滤函数*/
+            function fliter(flies)
+            {
+                let newFileArrs=[];
+                for(let i=0,len=flies.length;i<len;i++)
+                {
+                    let file=flies[i];
+                    if(file.type.indexOf("image")==0){
+                        if(file.size<1024000){//图片大小不能超过512k
+                            newFileArrs.push(file);
+                        }else{
+                           alert(`文件${file.name}过大应小于1024K`)
+                        }
+                    }else{
+                       alert(`你选择的文件${file.name}不是图片文件`);
+                    }
+                }
+                return newFileArrs;
+            }
+           /**展示要预览上传文件*/
+           function fileShowList(file,index)
+           {
+             let html=listArea.innerHTML;
+             html=html+`<div>
+                    <span class="title">${file.name}</span><span class="del" data-index=${index}>删除</span>
+                </div>`
+             listArea.innerHTML=html;
+             /**绑定删除事件*/
+             delFile();
+           };
+           /**取消要预览的**/
+           function delFile()
+           {
+              let dels=document.querySelectorAll(".del");
+             for(let i=0;i<dels.length;i++)
+             {
+                dels[i].addEventListener("click",function(e){
+                 let index=this.dataset.index;
+                //  let listAreaChild=document.querySelectorAll(".listArea > div");
+                //  console.log(index,listAreaChild[index]);
+                 listArea.removeChild(this.parentNode);
+                 delMapImage(index);
+                });
+             } 
+           }
+           /**删除图片对应的图片*/
+           function delMapImage(index)
+           {
+             let images=dragArea.querySelectorAll("img");
+             for(let i=0,len=images.length;i<len;i++)
+             {
+                 if(images[i].id==index)
+                 {
+                    images[i].parentNode.removeChild(images[i]);
+                    updateFileArr(index)
+                 }
+             }
+            
+           };
+           /**更新要上传的文件对象就是当当预览区里面的内容删除时其文件数组也要跟着变但是这里好像没实现*/
+           function updateFileArr(index)
+           {
+               console.log("index",index);
+              for(let i=0;i<FileArr.length;i++)
+              {
+                if(FileArr[i].num==index);
+                {
+                    console.log("dsads",FileArr[i].num,index)
+                    //FileArr.splice(i,1); 
+                }
+              } 
+              console.log("更新后的FileArr",FileArr)
+           }
+           /***上传函数*/
+           function upLoadFile(flies)
+           {
+              let len=files.length; 
+              let count=0; //已经上传成功的格式 
+              for(let i=0,file;file=files[i++];)//这里是对方循环遍历优化
+              {
+                  let xhr=new XMLHttpRequest();
+                  xhr.upload.onprogress=function(e)//在问件上传时触发
+                  {
+                    //是已上传/总数量 在这里可以做一些上传进度条的事件
+                    let percent= e.loaded/e.total;
+                  }
+                  xhr.onreadystatechange=function()
+                  {
+                      if(xhr.readyState==4)
+                      {
+                          if(xhr.status>=200||xhr.status<300||xhr.status==304)
+                          {
+                              count++;
+                              if(count==len)
+                              {
+                                alert("文件全部上传成功");
+                              }
+                          }
+                      }
+                  }
+                  let formData=new FormData();
+                  formData.append("file",file);
+                  xhr.open("post",url,true);
+                  xhr.send(formData);
+              }
+           }
+        })();
+    </script>
+</body>
+</html>
