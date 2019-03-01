@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body
+        {
+            background-color:#000;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+     <canvas id="myCanvas" ></canvas>
+     <script>
+         let canvas=document.querySelector("#myCanvas");
+         let ctx=canvas.getContext("2d");
+         
+         //将canvas画布定义为全屏
+         let width=document.documentElement.clientWidth || document.body.clientWidth;
+         let height=document.documentElement.clientHeight|| document.body.clientHeight;
+         canvas.width=width;
+         canvas.height=height;
+         //定义数组存放球类对象的数组
+         BallObjArr=[]
+
+         /**定义球类*/
+         function Ball(x,y)
+         {
+             this.x=x; //球类的x坐标
+             this.y=y; //球类的y坐标
+             this.r=Math.random()*40;//球类的半径
+             this.color=`rgba(${Math.random()*256},${Math.random()*256},${Math.random()*256},${Math.random()})`;//球类的颜色
+             //this.color="red";
+             this.dx=parseInt(Math.random()*18)-9 ;  //x轴变化时的增量
+             this.dy=parseInt(Math.random()*18)-9 ;  //y轴变化时的增量
+             BallObjArr.push(this);//实例化完之后将自己推入演员数组
+
+         }5
+         //定义球类的渲染方法
+         Ball.prototype.render=function(){
+             ctx.beginPath();
+             ctx.arc(this.x,this.y,this.r,0,Math.PI*2,true);
+             ctx.closePath();
+             ctx.fillStyle=this.color;
+             ctx.fill();
+         }
+         //定义球类的更新方法
+         Ball.prototype.update=function(){
+             this.r--;
+             this.x+=this.dx;
+             this.y+=this.dy;
+             /**当半径为零时从数组中清除自己*/
+             if(this.r<0)
+             {
+               this.die();
+             }
+         }
+         /**定义自杀函数*/
+         Ball.prototype.die=function()
+         {
+             /**不知道为啥不能用forEach*/
+            // BallObjArr.forEach(function(item,index){
+            //     if(item==this)
+            //     {
+            //         BallObjArr.splice(index,1);
+            //     }
+            // });
+            for(var i=0;i<BallObjArr.length;i++)
+            {
+                if(BallObjArr[i]===this)
+                {
+                    BallObjArr.splice(i,1);
+                }
+            }
+           
+         }
+         canvas.onmousemove=(event)=>
+         {
+             console.log(event);
+             new Ball(event.clientX,event.clientY);
+         }
+         /**开启定时器*/
+         setInterval(function(){
+             //清屏
+            ctx.clearRect(0,0,width,height);
+            //渲染更新小球
+            console.log(BallObjArr);
+            //循环处理对象序列
+            for(var i=0;i<BallObjArr.length;i++)
+            {
+                BallObjArr[i].update();
+                BallObjArr[i] &&   BallObjArr[i].render();
+            }
+
+         },20)
+     </script>
+</body>
+</html>
