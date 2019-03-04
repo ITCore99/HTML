@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>仿百度</title>
+    <style>
+      div,img,input,ul,li
+      {
+          margin:0;
+          padding:0;
+      }
+      li{
+          list-style: none
+      }
+      .box
+      {
+          width: 600px;
+          margin:50px auto  0px;
+
+      }
+      .box .image-box
+      {
+          text-align: center;
+      }
+      .box .image-box img
+      {
+          width: 300px;
+      }
+      .box .input-box
+      {
+          margin-top:10px;
+      }
+      .box .input-box .input
+      {
+        width: 100%;
+        height: 40px;
+        padding-left:15px;
+        box-sizing: border-box;
+        outline: none;
+        border:none;
+        border:1px solid #ccc;
+        font-size: 16px;
+        color:#333;
+        
+      }
+      .box .input-box .input:focus
+      {
+          border-color:#409eff;
+      }
+      .box .list-box
+      {
+          display: none;
+          border:1px solid #ccc;
+          border-top:none;
+          width: 598px;
+      }
+      .box .list-box li
+      {
+         height: 40px;
+         color:#333;
+         line-height: 40px;
+         padding-left:15px;
+         
+      }
+      .box .list-box li:hover
+      {
+          background-color:#ddd;
+      }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="image-box">
+            <img src="https://www.baidu.com/img/bd_logo1.png?where=super" alt="百度logo"/>
+        </div>
+        <div class="input-box">
+            <input type="text" placeholder="百度一下你就知道" class="input" id="input" />
+        </div>
+        <div class="list-box">
+            <ul>
+            </ul>
+        </div>
+    </div>
+    <script>
+            let ul="";
+            let listBOx="";
+           ;(function (){
+            let input="";
+            let body="";
+            let userValue=""//用户输入关键字
+            init();
+            /**页面初始化函数*/
+           function init()
+           {
+                EventBind();
+           };
+           /**事件绑定函数*/
+           function EventBind()
+           {
+               input=$("#input");
+               body=$("body");
+               listBOx=$(".list-box");
+               ul=$(".list-box ul");
+               input.addEventListener("keyup",()=>{
+                 requestFun()
+               });
+               ul.addEventListener("click",(e)=>{
+                  if(e.target.tagName=="LI")
+                  {
+                      window.location.href=`https://www.baidu.com/s?wd=${e.target.innerText}`;
+                  }
+               })
+           }
+           /**数据请求函数*/
+           function requestFun()
+           {
+              userValue=input.value;
+              console.log(userValue);
+              let script=document.createElement("script");
+              script.src=`https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=${userValue}&cb=MrFu`;
+              body.appendChild(script)  
+           }
+           /**选择器封装函数*/
+           function $(param)
+           {
+               return document.querySelector(param);
+           }
+        })();
+        function MrFu(e)
+        {  
+            let html="";
+            let data=e.s.slice(0,6);
+            if(data.length>0)
+            {
+                listBOx.style.display="block";
+
+            }else{
+                return;
+            }
+            data.forEach(element => {
+                let li=document.createElement("li");
+                html+=`<li>${element}</li>`
+            });
+            ul.innerHTML=html;
+        }
+      
+    </script>
+</body>
+</html>
