@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="keywords" content="ios时钟的制作,HTML">
+    <meta name="author" contenet="Mr.Fu">
+    <title>Document</title>
+    <style>
+        div,ul,li
+        {   padding:0;
+            margin:0
+        }
+        ul li
+        {
+            list-style:none
+        }
+        .watch-box
+        {   
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin:100px auto;
+            background-color:#000;
+            border-radius: 30px;
+            padding:5px;
+            box-sizing: border-box
+         }
+        .watch-inner
+        {
+            position: relative;
+            height:140px;
+            margin:0 atuo;
+            background: #fff;
+            border: 1px solid #00ff00;
+            border-radius:50%;
+          
+        }
+        .watch-inner li
+        {
+            position:absolute;
+            top:0%;
+            left:50%;
+            width: 30px;
+            margin-left:-15px; 
+            text-align: center;
+            transform-origin:50% 70px;
+        }
+        .watch-inner li span
+        {
+            display: block;
+        } 
+        .watch-box .center
+        {
+            position:absolute;
+            top:50%;
+            left:50%;
+            top:50%;
+            width: 10px;
+            height: 10px;
+            transform:translate(-50%,-50%);
+            background-color:#000;
+            border-radius: 50%;
+        }
+        .watch-box .hour
+        {
+            position:absolute;
+            top:35px;
+            left:50%;
+            width: 3px;
+            height:40px;
+            transform:translateX(-50%);
+            background-color:#000;
+            border-radius:1.5px;
+            transform-origin:center bottom;
+        }
+        .watch-box .min
+        {
+            position:absolute;
+            top:27px;
+            left:50%;
+            width: 2px;
+            height:48px;
+            transform:translateX(-50%);
+            background-color:#000;
+            border-radius:1px;
+            transform-origin:center bottom;
+        }
+        .watch-box .sec
+        {
+            position:absolute;
+            top:25px;
+            left:50%;
+            width: 2px;
+            height:60px;
+            transform:translateX(-50%);
+            background-color:orangered;
+            border-radius:1px;
+            transform-origin:center 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="watch-box">
+        <ul class="watch-inner">
+        </ul>
+        <div class="center"></div>
+        <div class="hour"></div>
+        <div class="min"></div>
+        <div class="sec"></div>
+    </div>
+    <script>
+        ;(function(){
+            let oul =$(".watch-inner"); 
+            let hourDom=$(".hour");
+            let minDom=$(".min");
+            let secDom=$(".sec")
+            init();     
+            function init()
+            {
+                liLayout();
+                auto();
+            }
+            /**布局函数*/
+            function liLayout()
+            {  
+                let html="";
+               for(let i=1;i<13;i++)
+               {
+                  html+=`<li style="transform:rotate(${i*30}deg)"><span style="transform:rotate(-${i*30}deg)">${i}</span><li>`
+               } 
+               oul.innerHTML=html;
+            }
+            /**涌动函数*/
+            function change()
+            {
+                let date=new Date(),
+                    hor=date.getHours(),
+                    min=date.getMinutes(),
+                    sec=date.getSeconds(),
+                    millSec=date.getMilliseconds();
+                let totalSec=sec+millSec/1000;
+                let totalMin=min+totalSec/60;
+                let totalHor=hor+min/60 ;
+                secDom.style.transform=`rotateZ(${totalSec*6}deg)`; 
+                minDom.style.transform=`rotateZ(${totalMin*6}deg)`;
+                hourDom.style.transform=`rotateZ(${totalHor*30}deg)`;
+            }
+            function auto()
+            {
+                setTimeout(()=>{
+                    change();
+                    auto();
+                },100)
+            }
+            function $(param)
+            {
+                return document.querySelector(param);
+            }
+        })();
+    </script>
+</body>
+</html>
