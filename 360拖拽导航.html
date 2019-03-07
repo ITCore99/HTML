@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=f  , initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        div,img{
+            margin:0;
+            padding:0;
+        }
+        .wrapper
+        {
+            position: relative;/**让获取的offset是依据wrapper的*/
+            width:520px;
+            height:325px;
+            border:1px solid #ccc;
+            margin:150px auto;
+            font-size: 0;
+            padding:15px;
+            padding-right:0;
+            border-radius: 15px;
+        }
+        .box-image
+        {
+            display:inline-block;
+            width:113px;
+            height: 68px; 
+            border:1px solid #ddd;
+            margin:0 15px 15px 0;
+            border-radius: 10px;
+            transition: transform 0.5 linear;
+              
+        }
+        .box-image img
+        {
+            width:100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="box-image">
+            <img src="../images/360Images/3601.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/3602.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/3603.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/3604.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/3605.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/3606.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/3607.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/3608.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/3609.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/36010.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/36011.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/36012.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/36013.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/36014.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/36015.jpg"/>
+        </div>
+        <div class="box-image">
+            <img src="../images/360Images/36016.jpg"/>
+        </div>
+    </div>
+    <script>
+        ;(function(){
+            let boxImages=document.querySelectorAll(".box-image");
+            let wrapper=document.querySelector(".wrapper");
+            let wrapperLeft=wrapper.offsetLeft;//wrapper相对于浏览的left
+            let wrapperTop=wrapper.offsetTop;//wrapper相对于浏览的top;
+            console.log(wrapperLeft,wrapperTop);
+            let boxImageLocation=[];//每一个item的定位信息
+            let ImgStartX="";//图片开始的位置X坐标
+            let IMgStartY="";//图片开始位置的Y坐标
+            let mouseStartX="";//鼠标开始的位置坐标
+            let mouseStartY="";//鼠标开始的y坐标
+            let element="";      //当前点中的元素
+            let islock=true; //点前用户是否点中img图片
+            let zIndex=1;  //默认元素的层级值避免选中元素在未选中低下
+            let goalElemnt="";//碰撞成功的元
+
+            /**
+             这是让所有的元素定义为绝对定位就可以是元素跟着鼠标走
+            */
+            var ItemLocation=()=>{
+             //注意这里获取比较慢但是设置快所以我们将设置的值放到定时器中这样会在任务队列和定时器线程之间切换的过程中保证cpu能得到offsetLeft和offsetTop;
+             let len=boxImages.length;
+             for(let i=0;i<len;i++)
+             {
+                boxImageLocation.push({"left":boxImages[i].offsetLeft,"top":boxImages[i].offsetTop});
+                setTimeout(function(){
+                    //这里使用let 将i保存下来再从数组中获取left和top；
+                    boxImages[i].style.position="absolute";
+                    boxImages[i].style.left=boxImageLocation[i].left+"px";
+                    boxImages[i].style.top=boxImageLocation[i].top+"px";
+                },0)   
+             }
+            }
+            //事件绑定函数
+            var eventBind=()=>{
+                wrapper.addEventListener("mousedown",drag);
+                document.addEventListener("mousemove",drag);
+                document.addEventListener("mouseup",drag);
+            }
+            //拖动函数
+            var drag=(event)=>{
+
+                 event.preventDefault(); //阻止浏览器不让我们拖拽事件
+                 switch(event.type)  //事件分流
+                 {
+                    case  "mousedown":
+                    islock=false;
+                    if(event.target.tagName=="IMG")
+                    {  
+                       element=event.target.parentNode;
+                       ImgStartX=event.target.parentNode.offsetLeft;
+                       IMgStartY=event.target.parentNode.offsetTop;
+                       mouseStartX=event.clientX;
+                       mouseStartY=event.clientY;
+                    //    console.log(ImgStartX,IMgStartY,mouseStartX,mouseStartY);
+                    //    console.log("鼠标按下")
+                    }
+                    break;
+                    case "mousemove":
+                    if(islock) //事件节流
+                    {
+                       return;
+                    }
+                    let nowMouseX=event.clientX;
+                    let nowMouseY=event.clientY;
+                    element.style.left=nowMouseX-mouseStartX+ImgStartX+"px";
+                    element.style.top=nowMouseY-mouseStartY+IMgStartY+"px";
+                    element.style.zIndex=++zIndex;
+
+                    //碰撞检测 鼠标进入表示碰撞成功
+                    let xr=event.clientX-wrapperLeft; //鼠标抬起后到wrapper层左边的距离
+                    let yr=event.clientY-wrapperTop; //鼠标抬起后到wrapper层z顶部的距离
+                    Array.from(boxImages).forEach((current)=>{ //循环判断与哪一个元素向撞了
+                        current.style.transform="";
+                        let left=current.offsetLeft;
+                        let top=current.offsetTop;
+                        if(
+                            current!=element&&
+                            xr>left&&xr<(left+115)&&
+                            yr>top&&yr<(top+70)
+                        )
+                        {
+                            console.log("碰撞成功");
+                            current.style.transform="scale(1.08)";//表示这个哪一个相撞提示用户
+                            goalElemnt=current;
+                        }
+                    })
+                  
+                    break;
+                    case "mouseup":
+                    islock=true;
+                 
+                    if(!goalElemnt) //如果没有撞到则则回到原位
+                    {
+                        element.style.left=ImgStartX+"px";
+                        element.style.top=IMgStartY+"px";
+                        return;
+                    }
+                    //两者交换
+                    element.style.left= goalElemnt.offsetLeft+"px";
+                    element.style.top= goalElemnt.offsetTop+"px";
+                    //console.log(goalElemnt,goalElemnt.style.offsetLeft, goalElemnt.style.offsetTop)
+                    goalElemnt.style.left=ImgStartX+"px";
+                    goalElemnt.style.top= IMgStartY+"px";
+                    goalElemnt.style.transform="";
+                    goalElemnt=null;
+                    break;
+
+                 }
+            }
+            ItemLocation();
+            eventBind()
+        })();
+    </script>
+</body>
+</html>
