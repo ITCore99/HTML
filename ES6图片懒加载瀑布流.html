@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body,img
+        {
+            margin:0;
+            padding:0;
+        }
+        .box
+        {
+          margin:0 auto;
+          font-size: 0;
+          background: #aaa;
+          position: relative;
+        }
+        .box-image
+        {
+            display: inline-block;
+            width: 250px;
+            padding:5px;
+            background-color:#eee;
+            vertical-align: top;
+        }
+        .box-image img
+        { 
+           width:100%;
+           height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="box-image">
+            <img src="../images/lanImages/lan1.jpg"class="img">
+        </div>
+        <div class="box-image">
+            <img src="../images/lanImages/lan2.jpg"class="img">
+        </div>
+        <div class="box-image">
+            <img src="../images/lanImages/lan3.jpg"class="img">
+        </div>
+        <div class="box-image">
+            <img src="../images/lanImages/lan4.jpg"class="img">
+        </div>
+        <div class="box-image">
+            <img src="../images/lanImages/lan5.jpg"class="img">
+        </div>
+        <div class="box-image">
+            <img src="../images/lanImages/lan6.jpg"class="img">
+        </div>
+        <div class="box-image">
+                <img src="../images/lanImages/lan4.jpg"class="img">
+        </div>
+        <div class="box-image">
+                <img src="../images/lanImages/lan3.jpg"class="img">
+        </div>
+        <div class="box-image">
+                <img src="../images/lanImages/lan2.jpg"class="img">
+        </div>
+        <div class="box-image">
+                <img src="../images/lanImages/lan1.jpg"class="img">
+        </div>
+        <div class="box-image">
+                <img src="../images/lanImages/lan6.jpg"class="img">
+        </div>
+        <div class="box-image">
+                <img src="../images/lanImages/lan5.jpg"class="img">
+        </div>
+    </div>
+    <script>
+        ;(function(){
+            let oParents=document.querySelector(".box"),      //祖宗节点
+                windowWidth="", //获取浏览的宽度
+                itemWidth="",                         //获取每一个容器的宽度
+                rowNum="",                           //获取每一行要显示的图片数
+                firstRowInfo=[],                     //第一行元素的布局信息
+                oContents=[],                       //所有的满足条件孩子队列
+                lock=false;                         //lock 防止用户多次操作
+            
+        
+            init();
+            /**页面的初始化函数*/
+            function init()
+            {
+               eventBind();
+            }
+
+            /**事件绑定函数*/
+            function eventBind()
+            {
+                window.addEventListener("load",()=>{  //注意这里一定要等到结构和图片完全渲染完才能获取元素的高度
+                if(!lock)
+                { 
+                    lock=true;
+                    imgLocation("box-image");
+                    
+                }  
+                this.addEventListener("scroll",()=>{
+                    let flage=checkScroll();
+                    if(flage)
+                    {
+                        addNewElement();
+                        if(!lock)
+                        { 
+                            lock=true;
+                            imgLocation("box-image");  
+                         }  
+                    }
+                });
+                this.window.addEventListener("resize",()=>{
+                        if(!lock)
+                        { 
+                            lock=true;
+                            imgLocation("box-image");  
+                         }  
+                })
+            });
+            }
+            /**设置图片的定位信息*/
+            function imgLocation(token)
+            {
+              windowWidth=document.body.clientWidth||document.documentElement.clientWidth;
+              oContents=getChids(token);
+              itemWidth=oContents[0].offsetWidth;      //获取每一个容器的宽度 
+              rowNum=~~(windowWidth/itemWidth);        //这里的~~向下取整
+              console.log("rowNum",rowNum);
+              oParents.style.cssText=`width:${itemWidth*rowNum}px;margin:0 auto;`//设置外层盒子大小
+              firstRowInfo=[];//注意这里要清空因为在滑动时会叠加
+              oContents.forEach((element,index) => {
+                if(index<rowNum)        //横排的显示个数小于可以放置的个数
+                {   
+                    firstRowInfo.push({left:element.offsetLeft,height:element.offsetHeight,index:index});
+                        
+                }else{                  //大于横排显示个数 进行定位
+                    let miniHeight=getMiniHeightIndex();
+                    console.log("minHeight",miniHeight);
+                    element.style.position="absolute";
+                    element.style.left=miniHeight.left+"px";
+                    element.style.top=miniHeight.height+"px";
+                    updateMiniHeight(element,miniHeight);
+                }     
+              });
+              lock=false;
+              console.log("firstRowInfo",firstRowInfo)
+            };
+
+            /**获取有效的子集*/
+             function getChids(token)
+             {
+                let oContents=[];
+                //获取所有的标签
+                let allChildren=oParents.querySelectorAll("*");      
+                //originoContents 存在着undefined
+                let originoContents=Array.prototype.map.call(allChildren,(element)=>{
+                    if(element.className==token)
+                    {
+                        return element;
+                    }
+                });  
+                originoContents.forEach(element=>{  //去除数组中的undefined
+                    if(element)
+                    {
+                        oContents.push(element);
+                    }
+                });   
+                return   oContents;        
+             }    
+
+
+            /**获取到最小高度的图片的index*/
+            function getMiniHeightIndex()
+            {
+              let initValue=firstRowInfo[0];
+              let miniValue=firstRowInfo.reduce((prev,current,currentIndex,firstRowInfo)=>{
+                if(current.height<prev.height)
+                {
+                    prev=current;
+                }
+                  return prev;
+              },initValue);
+              return miniValue;
+            }
+
+            /**更新最小值*/
+            function updateMiniHeight(element,miniHeight)
+            {
+                firstRowInfo.forEach((item,index)=>{
+                    if(index==miniHeight.index)
+                    {
+                        item.height+=element.offsetHeight;
+                    }
+                });
+            }
+
+            /**添加新元素*/
+            function addNewElement()
+            {
+                let pathIndex=~~(Math.random()*20)+1;
+                let div=document.createElement("div");
+                div.className="box-image";
+                oParents.appendChild(div);
+                let img=new Image();
+                img.src=`../images/lanImages/lan${pathIndex}.jpg`;
+                img.className="img";
+                div.appendChild(img);
+            }
+
+
+            /**检查滚动*/
+            function checkScroll()
+            {
+                /**判断最后一张图片加载完之后再开始滚动加载*/
+                let lastOffsetTop=oContents[oContents.length-1].offsetTop;//获取到最后一张距离浏览器的高度
+                let scrollTop=document.documentElement.scrollTop||document.body.scrollTop;//获取滚动条滚动高度
+                let windowHeight=document.documentElement.clientHeight||document.body.clientHeight;//获取浏览器高度
+                if(scrollTop+windowHeight>lastOffsetTop)//进入浏览区
+                {
+                     return true;
+                }
+                //console.log("lastOffsetTop",lastOffsetTop,scrollTop)
+            }
+        })();
+    </script>
+</body>
+</html>             
