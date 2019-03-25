@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    body,ul,li
+    {
+        margin:0;
+        padding:0;
+    }
+    li{
+        list-style-type:none;
+        font-size: 16px;
+        font-weight:bold;
+        padding:8px;
+    }
+    .phone
+    {
+      position:relative;
+      width:620px;
+      height:320px;
+      margin:100px auto 0;
+      border:10px solid #000;
+      border-radius:30px;
+      
+      
+    }
+    .phone .content
+    {
+        height:100%;
+        overflow-x:hidden; /**注意这里不能将其设在phone类上应为如果设置到iPhone上绝对定位的camera会随着滚动*/
+        overflow-y:scroll;
+    }
+    .phone .content ul{
+        height:100%;
+        padding-left:10px;
+    }
+    .camera
+    {
+        position:absolute;
+        top:60px;
+        left:0;
+        width:28px;
+        height:180px;
+        background:#000;
+        border-radius:0 20px 20px 0;
+        
+    }
+    li{
+        border-bottom:1px solid #ccc;
+    }
+    li:last-of-type
+    {
+        border:none;
+    }
+    /**隐藏滚动条 让滚动条移出说明的区域而隐藏*/
+    *::-webkit-scrollbar{
+        padding-left:100px;
+    }
+</style>
+<body>
+    <div class="phone">
+        <div class="content">
+           <ul>
+            <li>FunCam</li>
+            <li>camera connection kit</li>
+            <li>spy camera</li>
+            <li>Spycam</li>
+            <li>miniature camera</li>
+            <li>Apple iPad Camera Connection Kit</li>
+            <li>iPad Camera Connection </li>
+            <li>Nemus Camera</li>
+            <li>FunWithCameraLE</li>
+            <li>SnapPhotoPro</li>
+            <li>miniature camera</li>
+            <li>Doodle Camera</li>
+            <li>camera type</li>
+            <li>camera phone</li>
+            <li>CameraPro</li>
+            <li>Doodly</li>
+            <li>FunCam</li>
+            <li>camera connection kit</li>
+            <li>spy camera</li>
+            <li>Spycam</li>
+            <li>miniature camera</li>
+            <li>Apple iPad Camera Connection Kit</li>
+            <li>iPad Camera Connection </li>
+            <li>Nemus Camera</li>
+            <li>FunWithCameraLE</li>
+            <li>SnapPhotoPro</li>
+            <li>miniature camera</li>
+            <li>Doodle Camera</li>
+            <li>camera type</li>
+            <li>camera phone</li>
+            <li>CameraPro</li>
+            <li>Doodly</li>
+           </ul>
+           <div class="camera"></div>
+        </div>
+    </div>
+    <script>
+        ;(function(){
+            let lis=document.querySelectorAll("li");
+            let camera=document.querySelector(".camera");
+            let content=document.querySelector(".content");
+
+            let cameraRect=camera.getBoundingClientRect();//获取到摄像头区域距离对象
+            let thresh=20; /**设置驼峰值小于这个值的时就开始发生偏移 是li的底部与camera顶部之间的距离*/
+            let maxOffset=45;/**设置最大的偏移量*/
+            content.addEventListener("scroll",moveLi);
+            moveLi();
+            function moveLi()
+            {
+                for(item of lis)
+                {
+                    let perLiRect=item.getBoundingClientRect();
+                    let difTop=perLiRect.bottom - cameraRect.top;//摄像头顶部开始偏移
+                    let difBottom=perLiRect.bottom - cameraRect.bottom;//摄像头底部的开始偏移
+                    if(Math.abs(difTop)<thresh)/**设置为上下对称让效果更好上下各位20*/
+                    {
+                        item.style.transform=`translateX(${lerp(0,maxOffset,calcT(difTop,thresh))}px)`;
+                    }else if(difTop>thresh && difBottom <-thresh)// 中间
+                    {
+                        
+                        item.style.transform=`translateX(50px)`;
+                        
+                    }else if(Math.abs(difBottom)<thresh)//底部脱离中
+                    {
+                        item.style.transform=`translateX(${lerp(maxOffset,0,calcT(difBottom,thresh))}px)`;
+                        // console.log(`${lerp(maxOffset,0,calcT(difBottom,thresh))}`);
+                        // console.log(item);
+                    }else{ //完全溢出
+                        item.style.transform=`translateX(0)px`;
+                    }
+                }
+            }
+            /**插值算法*/
+            /**
+             *@param:插值算法
+             *@p1:初始状态
+             *@p2:结束状态
+             *@t :时间函数
+             *返回的是初始状态到结束状态中间的状态 
+             * */
+            function lerp(p1,p2,t)
+            {
+                return (p2-p1)*t+p1; 
+            }
+            /**计算时间函数 当-20 是t为0 当0时t为50% 当t=20 t为100% */
+            /**
+             * dis 之间的距离
+             * thr 总之
+             * */
+            function calcT(dis,thr)
+            {
+                //返回从0-100%之间的时间
+                //console.log("ttt", (dis+thr)/(2*thr))
+                return (dis+thr)/(2*thr);
+            }
+            
+
+        })();
+    </script>
+</body>
+</html>
